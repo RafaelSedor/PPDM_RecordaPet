@@ -31,11 +31,11 @@ $> yarn ios
 
 ## Protótipos de tela
 
-![Protótipo de telas](documentacao/prototipo.png)
+![Protótipo de telas](Documentacao/prototipo.png)
 
 ## Modelagem do banco de dados
 
-![Modelagem do banco de dados](docs/modelagem-banco.png)
+![Modelagem do banco de dados](Documentacao/modelagem-banco.png)
 
 ## Planejamento
 | Atividade | Tempo previsto | Data limite |
