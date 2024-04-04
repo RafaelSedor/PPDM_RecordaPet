@@ -31,7 +31,7 @@ $> yarn ios
 
 ## Protótipos de tela
 
-![Protótipo de telas](docs/prototipo.png)
+![Protótipo de telas](documentacao/prototipo.png)
 
 ## Modelagem do banco de dados
 
