@@ -24,10 +24,13 @@ $> yarn ios
 
 ## Funcionalidades
 - [ ] Cadastro de usuario
-- [ ] Login 
+- [ ] Login
+- [ ] Cadastro das casas
+- [ ] Cadastro dos animais
 - [ ] Visualização de casas
 - [ ] Visualização de animais na residência
 - [ ] Cadastro da alimentação
+- [ ] Visualização das alimentações
 
 ## Protótipos de tela
 
@@ -40,3 +43,13 @@ $> yarn ios
 ## Planejamento
 | Atividade | Tempo previsto | Data limite |
 | ----------- | ----------- | ----------- |
+| Configuração de roteamento     | 3 dias      | 28/04/2024 |
+| Configuração de middlewares de autenticação    | 3 dias      | 28/04/2024 |
+| Instalação e configurações de bibliotecas     | 2 dias      | 28/04/2024 |
+| Área de autenticação    | 1 semana      | 26/05/2024 |
+| Cadastro das casas    | 4 dias     | 26/05/2024 |
+| Cadastro dos animais    | 1 dia      | 26/05/2024 |
+| Listagem das casas    | 4 dias    | 26/05/2024 |
+| Listagem dos animais    | 1 dia     | 26/05/2024 |
+| Cadastro da alimentação    | 1 dias      | 26/05/2024 |
+| Listagem das alimentações    | 2 semanas      |16/06/2024 |
