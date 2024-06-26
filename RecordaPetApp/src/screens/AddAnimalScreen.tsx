@@ -6,7 +6,6 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  StyleSheet,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -29,25 +28,25 @@ const AddAnimalScreen: React.FC<AddAnimalScreenProps> = ({
   navigation,
   route,
 }) => {
-  const { onAnimalAdded } = route.params;
+  const { houseId, onAnimalAdded } = route.params;
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const { userId } = useContext(UserContext);
 
   const handleAddAnimal = () => {
-    insertAnimal(name, type, userId, (error, result) => {
-      if (error) {
-        console.error('Error inserting animal:', error);
-        Alert.alert('Error', 'Failed to add animal.');
-      } else {
+    insertAnimal(name, type, houseId)
+      .then(() => {
         if (onAnimalAdded) {
           onAnimalAdded();
         }
         Alert.alert('Success', 'Animal added successfully.', [
           { text: 'OK', onPress: () => navigation.goBack() },
         ]);
-      }
-    });
+      })
+      .catch((error) => {
+        console.error('Error inserting animal:', error);
+        Alert.alert('Error', 'Failed to add animal.');
+      });
   };
 
   return (

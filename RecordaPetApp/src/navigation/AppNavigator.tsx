@@ -1,3 +1,4 @@
+// AppNavigator.tsx
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,8 +11,8 @@ import AnimalsScreen from '../screens/AnimalsScreen';
 import FeedingsScreen from '../screens/FeedingsScreen';
 import HousesScreen from '../screens/HousesScreen';
 import LoginScreen from '../screens/LoginScreen';
-import LogoutScreen from '../screens/LogoutScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import LogoutButton from '../components/LogoutButton.tsx';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -21,14 +22,55 @@ const AppNavigator: React.FC = () => {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Houses" component={HousesScreen} />
-        <Stack.Screen name="Animals" component={AnimalsScreen} />
-        <Stack.Screen name="AnimalDetails" component={AnimalDetailsScreen} />
-        <Stack.Screen name="Feedings" component={FeedingsScreen} />
-        <Stack.Screen name="AddHouse" component={AddHouseScreen} />
-        <Stack.Screen name="AddAnimal" component={AddAnimalScreen} />
-        <Stack.Screen name="AddFeeding" component={AddFeedingScreen} />
-        <Stack.Screen name="Logout" component={LogoutScreen} />
+        <Stack.Screen
+          name="Houses"
+          component={HousesScreen}
+          options={{
+            headerRight: () => <LogoutButton />,
+          }}
+        />
+        <Stack.Screen
+          name="Animals"
+          component={AnimalsScreen}
+          options={{
+            headerRight: () => <LogoutButton />,
+          }}
+        />
+        <Stack.Screen
+          name="AnimalDetails"
+          component={AnimalDetailsScreen}
+          options={{
+            headerRight: () => <LogoutButton />,
+          }}
+        />
+        <Stack.Screen
+          name="Feedings"
+          component={FeedingsScreen}
+          options={{
+            headerRight: () => <LogoutButton />,
+          }}
+        />
+        <Stack.Screen
+          name="AddHouse"
+          component={AddHouseScreen}
+          options={{
+            headerRight: () => <LogoutButton />,
+          }}
+        />
+        <Stack.Screen
+          name="AddAnimal"
+          component={AddAnimalScreen}
+          options={{
+            headerRight: () => <LogoutButton />,
+          }}
+        />
+        <Stack.Screen
+          name="AddFeeding"
+          component={AddFeedingScreen}
+          options={{
+            headerRight: () => <LogoutButton />,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

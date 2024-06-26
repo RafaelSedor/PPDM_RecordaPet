@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
-import { fetchFeedings, addFeeding } from '../database/db';
+import { fetchFeedings, insertFeeding, updateFeeding, resetFeedings } from '../database/db';
 
 type AnimalDetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AnimalDetails'>;
 type AnimalDetailsScreenRouteProp = RouteProp<RootStackParamList, 'AnimalDetails'>;
@@ -15,29 +15,71 @@ type AnimalDetailsScreenProps = {
 
 const AnimalDetailsScreen: React.FC<AnimalDetailsScreenProps> = ({ navigation, route }) => {
   const { animalId } = route.params;
-  const [feedings, setFeedings] = useState([]);
+  const [feedings, setFeedings] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchFeedings(animalId);
-        setFeedings(data);
-      } catch (error) {
-        console.error('Error fetching feedings:', error);
-      }
-    };
-
-    fetchData();
-  }, [animalId]);
-
-  const handleAddFeeding = async (time: string) => {
+  const fetchData = async () => {
     try {
-      await addFeeding(time, 0, 0, 0, 0, animalId);
       const data = await fetchFeedings(animalId);
       setFeedings(data);
     } catch (error) {
+      console.error('Error fetching feedings:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [animalId]);
+
+  const handleAddFeeding = async (time: string, period: string) => {
+    try {
+      const existingFeeding = feedings.find(feeding => feeding.time.split('T')[0] === time.split('T')[0]);
+      
+      if (existingFeeding) {
+        const updatedFeeding = { ...existingFeeding, [period]: 1 };
+        await updateFeeding(
+          existingFeeding.id,
+          existingFeeding.time,
+          updatedFeeding.morning,
+          updatedFeeding.afternoon,
+          updatedFeeding.night,
+          updatedFeeding.dawn,
+          animalId
+        );
+      } else {
+        const newFeeding = {
+          time,
+          morning: period === 'morning' ? 1 : 0,
+          afternoon: period === 'afternoon' ? 1 : 0,
+          night: period === 'night' ? 1 : 0,
+          dawn: period === 'dawn' ? 1 : 0,
+          animalId
+        };
+        await insertFeeding(
+          newFeeding.time,
+          newFeeding.morning,
+          newFeeding.afternoon,
+          newFeeding.night,
+          newFeeding.dawn,
+          animalId
+        );
+      }
+
+      fetchData();
+      Alert.alert('Success', `Feeding for ${period} marked successfully.`);
+    } catch (error) {
       console.error('Error adding feeding:', error);
       Alert.alert('Error', 'There was an error adding the feeding.');
+    }
+  };
+
+  const handleResetFeedings = async () => {
+    try {
+      await resetFeedings(animalId);
+      fetchData();
+      Alert.alert('Success', 'All feedings have been reset.');
+    } catch (error) {
+      console.error('Error resetting feedings:', error);
+      Alert.alert('Error', 'There was an error resetting the feedings.');
     }
   };
 
@@ -56,9 +98,33 @@ const AnimalDetailsScreen: React.FC<AnimalDetailsScreenProps> = ({ navigation, r
         ))}
         <TouchableOpacity
           className="bg-green-500 p-2 rounded mb-4"
-          onPress={() => handleAddFeeding(new Date().toISOString())}
+          onPress={() => handleAddFeeding(new Date().toISOString(), 'morning')}
         >
-          <Text className="text-center text-white">Add Feeding</Text>
+          <Text className="text-center text-white">Mark Morning Feeding</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-green-500 p-2 rounded mb-4"
+          onPress={() => handleAddFeeding(new Date().toISOString(), 'afternoon')}
+        >
+          <Text className="text-center text-white">Mark Afternoon Feeding</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-green-500 p-2 rounded mb-4"
+          onPress={() => handleAddFeeding(new Date().toISOString(), 'night')}
+        >
+          <Text className="text-center text-white">Mark Night Feeding</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-green-500 p-2 rounded mb-4"
+          onPress={() => handleAddFeeding(new Date().toISOString(), 'dawn')}
+        >
+          <Text className="text-center text-white">Mark Dawn Feeding</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-red-500 p-2 rounded mb-4"
+          onPress={handleResetFeedings}
+        >
+          <Text className="text-center text-white">Reset All Feedings</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

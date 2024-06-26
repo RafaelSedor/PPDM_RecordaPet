@@ -25,22 +25,35 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   const { setUserId } = userContext;
 
-  const handleLogin = () => {
-    loginUser(username, password, (error, data) => {
-      if (error) {
-        console.error('Error logging in:', error);
-        Alert.alert('Error', 'Invalid credentials or server error.');
-      } else if (data && data.id) {
+  const handleLogin = async () => {
+    if (!username || !password) {
+      console.error('Username or Password is missing');
+      Alert.alert('Error', 'Please enter both username and password.');
+      return;
+    }
+  
+    console.log(`Tentando logar com username: ${username} e password: ${password}`);
+  
+    try {
+      const data = await loginUser(username, password);
+      console.log(`Data = ${data}`);
+      if (data && data.id) {
+        console.log('Login successful, user id:', data.id);
         setUserId(data.id);
         Alert.alert('Login Successful', 'You have logged in successfully.', [
           { text: 'OK', onPress: () => navigation.navigate('Houses') },
         ]);
       } else {
+        console.error('Invalid response from server:', data);
         Alert.alert('Error', 'Invalid response from server.');
       }
-    });
+    } catch (error) {
+      console.error('Error logging in:', error);
+      Alert.alert('Error', 'Invalid credentials or server error.');
+    }
   };
-
+  
+  
   return (
     <View className="bg-blue-800 flex-1 justify-center items-center">
       <View className="m-4 p-4 rounded-lg bg-blue-900">

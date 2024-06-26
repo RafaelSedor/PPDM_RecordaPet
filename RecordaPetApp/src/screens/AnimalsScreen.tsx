@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
@@ -15,18 +15,18 @@ type AnimalsScreenProps = {
 
 const AnimalsScreen: React.FC<AnimalsScreenProps> = ({ navigation, route }) => {
   const { houseId } = route.params;
-  const [animals, setAnimals] = useState([]);
+  const [animals, setAnimals] = useState<any[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const data = await fetchAnimals(houseId);
+      setAnimals(data);
+    } catch (error) {
+      console.error('Error fetching animals:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchAnimals(houseId);
-        setAnimals(data);
-      } catch (error) {
-        console.error('Error fetching animals:', error);
-      }
-    };
-
     fetchData();
   }, [houseId]);
 
@@ -35,10 +35,14 @@ const AnimalsScreen: React.FC<AnimalsScreenProps> = ({ navigation, route }) => {
       <View className="m-4 p-4 rounded-lg bg-blue-900">
         <Text className="text-white text-center mb-4">Animals</Text>
         {animals.map((animal, index) => (
-          <View key={index} className="bg-blue-700 p-2 rounded mb-2">
+          <TouchableOpacity
+            key={index}
+            className="bg-blue-700 p-2 rounded mb-2"
+            onPress={() => navigation.navigate('AnimalDetails', { animalId: animal.id })}
+          >
             <Text className="text-white">Name: {animal.name}</Text>
             <Text className="text-white">Type: {animal.type}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
         <TouchableOpacity
           className="bg-green-500 p-2 rounded mb-4"

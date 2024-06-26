@@ -34,18 +34,18 @@ const AddHouseScreen: React.FC<AddHouseScreenProps> = ({
   const { userId } = React.useContext(UserContext);
 
   const handleAddHouse = () => {
-    insertHouse(name, address, userId, (error: any, result: any) => {
-      if (error) {
+    insertHouse(name, address, userId)
+      .then(() => {
+        if (onHouseAdded) {
+          onHouseAdded();
+        }
+        Alert.alert("Casa adicionada!", "A casa foi adicionada com sucesso.", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
+      })
+      .catch((error) => {
         Alert.alert("Erro", "Não foi possível adicionar a casa.");
-        return;
-      }
-      if (onHouseAdded) {
-        onHouseAdded();
-      }
-      Alert.alert("Casa adicionada!", "A casa foi adicionada com sucesso.", [
-        { text: "OK", onPress: () => navigation.goBack() },
-      ]);
-    });
+      });
   };
 
   return (

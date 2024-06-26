@@ -16,16 +16,17 @@ type HousesScreenProps = {
 const HousesScreen: React.FC<HousesScreenProps> = ({ navigation, route }) => {
   const [houses, setHouses] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchHouses();
-        setHouses(data);
-      } catch (error) {
-        console.error('Error fetching houses:', error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const data = await fetchHouses();
+      setHouses(data);
+    } catch (error) {
+      console.error('Error fetching houses:', error);
+      Alert.alert('Error', 'Failed to fetch houses.');
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -34,10 +35,14 @@ const HousesScreen: React.FC<HousesScreenProps> = ({ navigation, route }) => {
       <View className="m-4 p-4 rounded-lg bg-blue-900">
         <Text className="text-white text-center mb-4">Houses</Text>
         {houses.map((house, index) => (
-          <View key={index} className="bg-blue-700 p-2 rounded mb-2">
-            <Text className="text-white">Name: {house.name}</Text>
-            <Text className="text-white">Address: {house.address}</Text>
-          </View>
+          <TouchableOpacity
+          key={index}
+          className="bg-blue-700 p-2 rounded mb-2"
+          onPress={() => navigation.navigate('Animals', { houseId: house.id })}
+        >
+          <Text className="text-white">Name: {house.name}</Text>
+          <Text className="text-white">Address: {house.address}</Text>
+        </TouchableOpacity>
         ))}
         <TouchableOpacity
           className="bg-green-500 p-2 rounded mb-4"

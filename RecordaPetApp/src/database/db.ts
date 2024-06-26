@@ -1,35 +1,33 @@
-import * as SQLite from 'expo-sqlite';
+import { executeTransaction } from "./SQLiteDatabase";
 
-const db = SQLite.openDatabase('recordapet.db');
-
-// Função para criar as tabelas necessárias
-export const createTables = () => {
-  db.transaction(tx => {
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS users (
+// Function to create the necessary tables
+export const createTables = async () => {
+  try {
+    await executeTransaction(`
+      CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         username TEXT, 
         password TEXT
-      );`
-    );
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS houses (
+      );
+    `);
+    await executeTransaction(`
+      CREATE TABLE IF NOT EXISTS houses (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT, 
         address TEXT, 
         userId INTEGER
-      );`
-    );
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS animals (
+      );
+    `);
+    await executeTransaction(`
+      CREATE TABLE IF NOT EXISTS animals (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT, 
         type TEXT, 
         houseId INTEGER
-      );`
-    );
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS feedings (
+      );
+    `);
+    await executeTransaction(`
+      CREATE TABLE IF NOT EXISTS feedings (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         time DATETIME, 
         morning INTEGER, 
@@ -37,270 +35,265 @@ export const createTables = () => {
         night INTEGER, 
         dawn INTEGER, 
         animalId INTEGER
-      );`
-    );
-  });
+      );
+    `);
+    console.log('Tables created successfully');
+  } catch (error) {
+    console.error('Error creating tables:', error);
+  }
 };
 
-// Função para registrar um usuário
-export const registerUser = (username: string, password: string, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to register a user
+export const registerUser = async (username: string, password: string) => {
+  try {
+    const result = await executeTransaction(
       'INSERT INTO users (username, password) VALUES (?, ?)',
-      [username, password],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [username, password]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw error;
+  }
 };
 
-// Função para logar um usuário
-export const loginUser = (username: string, password: string, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to log in a user
+export const loginUser = async (username: string, password: string) => {
+  console.log(`usuario = ${username} and password = ${password}`);
+  try {
+    const result = await executeTransaction(
       'SELECT * FROM users WHERE username = ? AND password = ?',
-      [username, password],
-      (_, { rows }) => {
-        if (rows.length > 0) {
-          callback(null, rows.item(0));
-        } else {
-          callback('Invalid credentials', null);
-        }
-      },
-      (_, error) => {
-        callback(error, null);
-        return true;
-      }
+      [username, password]
     );
-  });
+    if (result.rows.length > 0) {
+      return result.rows.item(0);
+    } else {
+      throw new Error('Invalid credentials');
+    }
+  } catch (error) {
+    console.error('Error logging in:', error);
+    throw error;
+  }
 };
 
-// Função para obter todas as casas
-export const fetchHouses = (callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
-      'SELECT * FROM houses',
-      [],
-      (_, { rows }) => callback(null, rows._array),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
-    );
-  });
+// Function to fetch all houses
+export const fetchHouses = async () => {
+  try {
+    const result = await executeTransaction('SELECT * FROM houses');
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching houses:', error);
+    throw error;
+  }
 };
 
-// Função para adicionar uma casa
-export const insertHouse = (name: string, address: string, userId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to insert a house
+export const insertHouse = async (name: string, address: string, userId: number) => {
+  try {
+    const result = await executeTransaction(
       'INSERT INTO houses (name, address, userId) VALUES (?, ?, ?)',
-      [name, address, userId],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [name, address, userId]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error inserting house:', error);
+    throw error;
+  }
 };
 
-// Função para obter uma casa específica
-export const fetchHouse = (id: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to fetch a specific house
+export const fetchHouse = async (id: number) => {
+  try {
+    const result = await executeTransaction(
       'SELECT * FROM houses WHERE id = ?',
-      [id],
-      (_, { rows }) => callback(null, rows._array),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [id]
     );
-  });
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching house:', error);
+    throw error;
+  }
 };
 
-// Função para atualizar uma casa
-export const updateHouse = (id: number, name: string, address: string, userId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to update a house
+export const updateHouse = async (id: number, name: string, address: string, userId: number) => {
+  try {
+    const result = await executeTransaction(
       'UPDATE houses SET name = ?, address = ?, userId = ? WHERE id = ?',
-      [name, address, userId, id],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [name, address, userId, id]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error updating house:', error);
+    throw error;
+  }
 };
 
-// Função para deletar uma casa
-export const deleteHouse = (id: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to delete a house
+export const deleteHouse = async (id: number) => {
+  try {
+    const result = await executeTransaction(
       'DELETE FROM houses WHERE id = ?',
-      [id],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [id]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error deleting house:', error);
+    throw error;
+  }
 };
 
-// Função para obter todos os animais de uma casa específica
-export const fetchAnimals = (houseId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to fetch all animals of a specific house
+export const fetchAnimals = async (houseId: number) => {
+  try {
+    const result = await executeTransaction(
       'SELECT * FROM animals WHERE houseId = ?',
-      [houseId],
-      (_, { rows }) => callback(null, rows._array),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [houseId]
     );
-  });
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching animals:', error);
+    throw error;
+  }
 };
 
-// Função para adicionar um animal
-export const insertAnimal = (name: string, type: string, houseId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to insert an animal
+export const insertAnimal = async (name: string, type: string, houseId: number) => {
+  try {
+    const result = await executeTransaction(
       'INSERT INTO animals (name, type, houseId) VALUES (?, ?, ?)',
-      [name, type, houseId],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [name, type, houseId]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error inserting animal:', error);
+    throw error;
+  }
 };
 
-// Função para obter um animal específico
-export const fetchAnimal = (id: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to fetch a specific animal
+export const fetchAnimal = async (id: number) => {
+  try {
+    const result = await executeTransaction(
       'SELECT * FROM animals WHERE id = ?',
-      [id],
-      (_, { rows }) => callback(null, rows._array),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [id]
     );
-  });
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching animal:', error);
+    throw error;
+  }
 };
 
-// Função para atualizar um animal
-export const updateAnimal = (id: number, name: string, type: string, houseId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to update an animal
+export const updateAnimal = async (id: number, name: string, type: string, houseId: number) => {
+  try {
+    const result = await executeTransaction(
       'UPDATE animals SET name = ?, type = ?, houseId = ? WHERE id = ?',
-      [name, type, houseId, id],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [name, type, houseId, id]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error updating animal:', error);
+    throw error;
+  }
 };
 
-// Função para deletar um animal
-export const deleteAnimal = (id: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to delete an animal
+export const deleteAnimal = async (id: number) => {
+  try {
+    const result = await executeTransaction(
       'DELETE FROM animals WHERE id = ?',
-      [id],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [id]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error deleting animal:', error);
+    throw error;
+  }
 };
 
-// Função para obter todas as alimentações de um animal específico
-export const fetchFeedings = (animalId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to fetch all feedings of a specific animal
+export const fetchFeedings = async (animalId: number) => {
+  try {
+    const result = await executeTransaction(
       'SELECT * FROM feedings WHERE animalId = ?',
-      [animalId],
-      (_, { rows }) => callback(null, rows._array),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [animalId]
     );
-  });
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching feedings:', error);
+    throw error;
+  }
 };
 
-// Função para adicionar uma alimentação
-export const insertFeeding = (time: string, morning: number, afternoon: number, night: number, dawn: number, animalId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to insert a feeding
+export const insertFeeding = async (time: string, morning: number, afternoon: number, night: number, dawn: number, animalId: number) => {
+  try {
+    const result = await executeTransaction(
       'INSERT INTO feedings (time, morning, afternoon, night, dawn, animalId) VALUES (?, ?, ?, ?, ?, ?)',
-      [time, morning, afternoon, night, dawn, animalId],
-      (_, result) => {
-        callback(null, result);
-      },
-      (_, error) => {
-        callback(error);
-        return true;
-      }
+      [time, morning, afternoon, night, dawn, animalId]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error inserting feeding:', error);
+    throw error;
+  }
 };
 
-// Função para obter uma alimentação específica
-export const fetchFeeding = (id: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to fetch a specific feeding
+export const fetchFeeding = async (id: number) => {
+  try {
+    const result = await executeTransaction(
       'SELECT * FROM feedings WHERE id = ?',
-      [id],
-      (_, { rows }) => callback(null, rows._array),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [id]
     );
-  });
+    return result.rows._array;
+  } catch (error) {
+    console.error('Error fetching feeding:', error);
+    throw error;
+  }
 };
 
-// Função para atualizar uma alimentação
-export const updateFeeding = (id: number, time: string, morning: number, afternoon: number, night: number, dawn: number, animalId: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to update a feeding
+export const updateFeeding = async (id: number, time: string, morning: number, afternoon: number, night: number, dawn: number, animalId: number) => {
+  try {
+    const result = await executeTransaction(
       'UPDATE feedings SET time = ?, morning = ?, afternoon = ?, night = ?, dawn = ?, animalId = ? WHERE id = ?',
-      [time, morning, afternoon, night, dawn, animalId, id],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [time, morning, afternoon, night, dawn, animalId, id]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error updating feeding:', error);
+    throw error;
+  }
 };
 
-// Função para deletar uma alimentação
-export const deleteFeeding = (id: number, callback: (error: any, result?: any) => void) => {
-  db.transaction(tx => {
-    tx.executeSql(
+// Function to delete a feeding
+export const deleteFeeding = async (id: number) => {
+  try {
+    const result = await executeTransaction(
       'DELETE FROM feedings WHERE id = ?',
-      [id],
-      (_, result) => callback(null, result),
-      (_, error) => {
-        callback(error);
-        return false;
-      }
+      [id]
     );
-  });
+    return result;
+  } catch (error) {
+    console.error('Error deleting feeding:', error);
+    throw error;
+  }
 };
+
+// Function to reset all feedings of a specific animal
+export const resetFeedings = async (animalId: number) => {
+  try {
+    const result = await executeTransaction(
+      'DELETE FROM feedings WHERE animalId = ?',
+      [animalId]
+    );
+    return result;
+  } catch (error) {
+    console.error('Error resetting feedings:', error);
+    throw error;
+  }
+};
+
