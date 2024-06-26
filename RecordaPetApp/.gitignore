@@ -1,0 +1,19 @@
+# React Native
+node_modules/
+ios/
+android/
+build/
+index.android.js
+index.ios.js
+index.js
+*.log
+*.patch
+*.diff
+*.sublime-project
+*.sublime-workspace
+*.xcuserdatad
+*.xcuserdata
+*.lock
+.DS_Store
+.expo/
+.expo-shared/
