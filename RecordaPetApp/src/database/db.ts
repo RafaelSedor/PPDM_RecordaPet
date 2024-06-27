@@ -1,5 +1,20 @@
 import { executeTransaction } from "./SQLiteDatabase";
 
+
+// Function to reset the necessary tables
+export const resetAllTables = async () => {
+  try {
+    await executeTransaction('DROP TABLE IF EXISTS users;');
+    await executeTransaction('DROP TABLE IF EXISTS houses;');
+    await executeTransaction('DROP TABLE IF EXISTS animals;');
+    await executeTransaction('DROP TABLE IF EXISTS feedings;');
+    await createTables();
+    console.log('All tables reset successfully');
+  } catch (error) {
+    console.error('Error resetting tables:', error);
+  }
+};
+
 // Function to create the necessary tables
 export const createTables = async () => {
   try {
@@ -15,7 +30,10 @@ export const createTables = async () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT, 
         address TEXT, 
-        userId INTEGER
+        userId INTEGER,
+        houseId TEXT,
+        housePassword TEXT,
+        FOREIGN KEY (userId) REFERENCES users(id)
       );
     `);
     await executeTransaction(`
@@ -23,7 +41,8 @@ export const createTables = async () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT, 
         type TEXT, 
-        houseId INTEGER
+        houseId INTEGER,
+        FOREIGN KEY (houseId) REFERENCES houses(id)
       );
     `);
     await executeTransaction(`
@@ -34,7 +53,17 @@ export const createTables = async () => {
         afternoon INTEGER, 
         night INTEGER, 
         dawn INTEGER, 
-        animalId INTEGER
+        animalId INTEGER,
+        FOREIGN KEY (animalId) REFERENCES animals(id)
+      );
+    `);
+    await executeTransaction(`
+      CREATE TABLE IF NOT EXISTS user_houses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER,
+        houseId INTEGER,
+        FOREIGN KEY (userId) REFERENCES users(id),
+        FOREIGN KEY (houseId) REFERENCES houses(id)
       );
     `);
     console.log('Tables created successfully');
@@ -77,9 +106,12 @@ export const loginUser = async (username: string, password: string) => {
 };
 
 // Function to fetch all houses
-export const fetchHouses = async () => {
+export const fetchHouses = async (userId: number) => {
   try {
-    const result = await executeTransaction('SELECT * FROM houses');
+    const result = await executeTransaction(
+      'SELECT houses.* FROM houses JOIN user_houses ON houses.id = user_houses.houseId WHERE user_houses.userId = ?',
+      [userId]
+    );
     return result.rows._array;
   } catch (error) {
     console.error('Error fetching houses:', error);
@@ -88,12 +120,27 @@ export const fetchHouses = async () => {
 };
 
 // Function to insert a house
-export const insertHouse = async (name: string, address: string, userId: number) => {
+export const insertHouse = async (name: string, address: string, userId: number, houseId: string, housePassword: string) => {
   try {
     const result = await executeTransaction(
-      'INSERT INTO houses (name, address, userId) VALUES (?, ?, ?)',
-      [name, address, userId]
+      'INSERT INTO houses (name, address, userId, houseId, housePassword) VALUES (?, ?, ?, ?, ?)',
+      [name, address, userId, houseId, housePassword]
     );
+
+    const houseResult = await executeTransaction(
+      'SELECT id FROM houses WHERE houseId = ? AND housePassword = ?',
+      [houseId, housePassword]
+    );
+
+    if (houseResult.rows.length > 0) {
+      const houseDbId = houseResult.rows.item(0).id;
+
+      await executeTransaction(
+        'INSERT INTO user_houses (userId, houseId) VALUES (?, ?)',
+        [userId, houseDbId]
+      );
+    }
+    
     return result;
   } catch (error) {
     console.error('Error inserting house:', error);
@@ -296,4 +343,29 @@ export const resetFeedings = async (animalId: number) => {
     throw error;
   }
 };
+
+export const addHouseById = async (houseId: string, housePassword: string, userId: number) => {
+  try {
+    const result = await executeTransaction(
+      'SELECT * FROM houses WHERE houseId = ? AND housePassword = ?',
+      [houseId, housePassword]
+    );
+    if (result.rows.length > 0) {
+      const house = result.rows.item(0);
+      
+      await executeTransaction(
+        'INSERT INTO user_houses (userId, houseId) VALUES (?, ?)',
+        [userId, house.id]
+      );
+      
+      return house;
+    } else {
+      throw new Error('Invalid House ID or Password');
+    }
+  } catch (error) {
+    console.error('Error adding house by ID:', error);
+    throw error;
+  }
+};
+
 

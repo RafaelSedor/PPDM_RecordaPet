@@ -32,23 +32,23 @@ const AnimalsScreen: React.FC<AnimalsScreenProps> = ({ navigation, route }) => {
 
   return (
     <ScrollView className="bg-blue-800 flex-1">
-      <View className="m-4 p-4 rounded-lg bg-blue-900">
-        <Text className="text-white text-center mb-4">Animals</Text>
+      <View className="m-6 p-6 rounded-lg bg-blue-900">
+        <Text className="text-white text-center mb-6 text-2xl">Animais</Text>
         {animals.map((animal, index) => (
           <TouchableOpacity
             key={index}
-            className="bg-blue-700 p-2 rounded mb-2"
+            className="bg-blue-700 p-4 rounded mb-4"
             onPress={() => navigation.navigate('AnimalDetails', { animalId: animal.id })}
           >
-            <Text className="text-white">Name: {animal.name}</Text>
-            <Text className="text-white">Type: {animal.type}</Text>
+            <Text className="text-white text-lg">Name: {animal.name}</Text>
+            <Text className="text-white text-lg">type: {animal.type}</Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded mb-4"
+          className="bg-green-500 p-4 rounded mb-4"
           onPress={() => navigation.navigate('AddAnimal', { houseId, onAnimalAdded: fetchData })}
         >
-          <Text className="text-center text-white">Add Animal</Text>
+          <Text className="text-center text-white text-lg">Adicionar Animal</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

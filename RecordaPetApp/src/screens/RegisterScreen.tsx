@@ -21,44 +21,44 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
       return;
     }
     try {
-      const response = await registerUser(username, password);
-      console
+      await registerUser(username, password);
       Alert.alert('Success', 'User registered successfully!');
       navigation.navigate('Login');
-  } catch (error) {
+    } catch (error) {
       Alert.alert('Error', 'Failed to register user');
-  }
+    }
   };
 
   return (
     <ScrollView className="bg-blue-800 flex-1">
-      <View className="m-4 p-4 rounded-lg bg-blue-900">
+      <View className="m-4 p-6 rounded-lg bg-blue-900">
         <TextInput
-          className="text-white mb-2 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Nome"
           placeholderTextColor="white"
           onChangeText={setUsername}
         />
         <TextInput
-          className="text-white mb-2 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Senha"
           placeholderTextColor="white"
           secureTextEntry={true}
           onChangeText={setPassword}
         />
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-6 bg-blue-700 p-4 rounded text-lg"
           placeholder="Confirmação de senha"
           placeholderTextColor="white"
           secureTextEntry={true}
           onChangeText={setConfirmPassword}
         />
-        <TouchableOpacity className="bg-green-500 p-2 rounded" onPress={handleRegister}>
-          <Text className="text-center text-white">Cadastrar</Text>
+        <TouchableOpacity className="bg-green-500 p-4 rounded" onPress={handleRegister}>
+          <Text className="text-center text-white text-lg">Cadastrar</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
+
 };
 
 export default RegisterScreen;

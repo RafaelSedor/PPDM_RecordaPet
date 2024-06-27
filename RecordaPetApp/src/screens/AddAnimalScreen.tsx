@@ -51,24 +51,24 @@ const AddAnimalScreen: React.FC<AddAnimalScreenProps> = ({
 
   return (
     <ScrollView className="bg-blue-800 flex-1">
-      <View className="m-4 p-4 rounded-lg bg-blue-900">
+      <View className="m-4 p-8 rounded-lg bg-blue-900">
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Nome"
           placeholderTextColor="white"
           onChangeText={setName}
         />
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Tipo"
           placeholderTextColor="white"
           onChangeText={setType}
         />
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded"
+          className="bg-green-500 p-4 rounded"
           onPress={handleAddAnimal}
         >
-          <Text className="text-center text-white">Adicionar Animal</Text>
+          <Text className="text-center text-white text-lg">Adicionar Animal</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

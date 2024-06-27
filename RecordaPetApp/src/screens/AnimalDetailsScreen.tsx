@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/types';
-import { fetchFeedings, insertFeeding, updateFeeding, resetFeedings } from '../database/db';
+import { fetchFeedings, insertFeeding, resetFeedings, updateFeeding } from '../database/db';
 
 type AnimalDetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AnimalDetails'>;
 type AnimalDetailsScreenRouteProp = RouteProp<RootStackParamList, 'AnimalDetails'>;
@@ -72,23 +72,12 @@ const AnimalDetailsScreen: React.FC<AnimalDetailsScreenProps> = ({ navigation, r
     }
   };
 
-  const handleResetFeedings = async () => {
-    try {
-      await resetFeedings(animalId);
-      fetchData();
-      Alert.alert('Success', 'All feedings have been reset.');
-    } catch (error) {
-      console.error('Error resetting feedings:', error);
-      Alert.alert('Error', 'There was an error resetting the feedings.');
-    }
-  };
-
   return (
     <ScrollView className="bg-blue-800 flex-1">
       <View className="m-4 p-4 rounded-lg bg-blue-900">
-        <Text className="text-white text-center mb-4">Feedings</Text>
+        <Text className="text-white text-center mb-4 text-lg">Feedings</Text>
         {feedings.map((feeding, index) => (
-          <View key={index} className="bg-blue-700 p-2 rounded mb-2">
+          <View key={index} className="bg-blue-700 p-4 rounded mb-2">
             <Text className="text-white">Time: {feeding.time}</Text>
             <Text className="text-white">Morning: {feeding.morning ? 'Yes' : 'No'}</Text>
             <Text className="text-white">Afternoon: {feeding.afternoon ? 'Yes' : 'No'}</Text>
@@ -97,38 +86,39 @@ const AnimalDetailsScreen: React.FC<AnimalDetailsScreenProps> = ({ navigation, r
           </View>
         ))}
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded mb-4"
+          className="bg-green-500 p-4 rounded mb-4"
           onPress={() => handleAddFeeding(new Date().toISOString(), 'morning')}
         >
-          <Text className="text-center text-white">Mark Morning Feeding</Text>
+          <Text className="text-center text-white text-lg">Mark Morning Feeding</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded mb-4"
+          className="bg-green-500 p-4 rounded mb-4"
           onPress={() => handleAddFeeding(new Date().toISOString(), 'afternoon')}
         >
-          <Text className="text-center text-white">Mark Afternoon Feeding</Text>
+          <Text className="text-center text-white text-lg">Mark Afternoon Feeding</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded mb-4"
+          className="bg-green-500 p-4 rounded mb-4"
           onPress={() => handleAddFeeding(new Date().toISOString(), 'night')}
         >
-          <Text className="text-center text-white">Mark Night Feeding</Text>
+          <Text className="text-center text-white text-lg">Mark Night Feeding</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded mb-4"
+          className="bg-green-500 p-4 rounded mb-4"
           onPress={() => handleAddFeeding(new Date().toISOString(), 'dawn')}
         >
-          <Text className="text-center text-white">Mark Dawn Feeding</Text>
+          <Text className="text-center text-white text-lg">Mark Dawn Feeding</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className="bg-red-500 p-2 rounded mb-4"
-          onPress={handleResetFeedings}
+          className="bg-red-500 p-4 rounded mb-4"
+          onPress={() => resetFeedings(animalId)}
         >
-          <Text className="text-center text-white">Reset All Feedings</Text>
+          <Text className="text-center text-white text-lg">Reset Feedings</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
+  
 };
 
 export default AnimalDetailsScreen;

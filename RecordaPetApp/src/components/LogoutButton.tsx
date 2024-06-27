@@ -1,4 +1,3 @@
-// components/LogoutButton.tsx
 import React, { useContext } from "react";
 import { TouchableOpacity, Text, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";

@@ -53,34 +53,30 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     }
   };
   
-  
   return (
     <View className="bg-blue-800 flex-1 justify-center items-center">
-      <View className="m-4 p-4 rounded-lg bg-blue-900">
+      <View className="bg-blue-900 p-8 rounded-lg w-4/5">
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Username"
           placeholderTextColor="white"
           onChangeText={setUsername}
         />
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Password"
           placeholderTextColor="white"
           secureTextEntry
           onChangeText={setPassword}
         />
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded"
+          className="bg-green-500 p-4 rounded mb-4"
           onPress={handleLogin}
         >
-          <Text className="text-center text-white">Login</Text>
+          <Text className="text-center text-white text-lg">Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-gray-500 p-2 rounded mt-4"
-          onPress={() => navigation.navigate('Register')}
-        >
-          <Text className="text-center text-white">Register</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text className="text-center text-white text-lg">Register</Text>
         </TouchableOpacity>
       </View>
     </View>

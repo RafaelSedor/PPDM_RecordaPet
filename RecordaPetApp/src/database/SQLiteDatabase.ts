@@ -16,7 +16,7 @@ export const executeTransaction = (
         },
         (_, error) => {
           reject(error);
-          return true; // rollback
+          return true;
         }
       );
     });

@@ -24,6 +24,14 @@ type AddHouseScreenProps = {
   route: AddHouseScreenRouteProp;
 };
 
+const generateHouseId = () => {
+  return Math.floor(1000 + Math.random() * 9000).toString();
+};
+
+const generateHousePassword = () => {
+  return Math.random().toString(36).slice(-8);
+};
+
 const AddHouseScreen: React.FC<AddHouseScreenProps> = ({
   navigation,
   route,
@@ -32,16 +40,20 @@ const AddHouseScreen: React.FC<AddHouseScreenProps> = ({
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const { userId } = React.useContext(UserContext);
+  const houseId = generateHouseId();
+  const housePassword = generateHousePassword();
 
   const handleAddHouse = () => {
-    insertHouse(name, address, userId)
+    insertHouse(name, address, userId, houseId, housePassword)
       .then(() => {
         if (onHouseAdded) {
           onHouseAdded();
         }
-        Alert.alert("Casa adicionada!", "A casa foi adicionada com sucesso.", [
-          { text: "OK", onPress: () => navigation.goBack() },
-        ]);
+        Alert.alert(
+          "Casa adicionada!",
+          `A casa foi adicionada com sucesso.\nID: ${houseId}\nSenha: ${housePassword}`,
+          [{ text: "OK", onPress: () => navigation.goBack() }]
+        );
       })
       .catch((error) => {
         Alert.alert("Erro", "Não foi possível adicionar a casa.");
@@ -50,24 +62,24 @@ const AddHouseScreen: React.FC<AddHouseScreenProps> = ({
 
   return (
     <ScrollView className="bg-blue-800 flex-1">
-      <View className="m-4 p-4 rounded-lg bg-blue-900">
+      <View className="m-4 p-8 rounded-lg bg-blue-900">
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Nome"
           placeholderTextColor="white"
           onChangeText={setName}
         />
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Endereço"
           placeholderTextColor="white"
           onChangeText={setAddress}
         />
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded"
+          className="bg-green-500 p-4 rounded"
           onPress={handleAddHouse}
         >
-          <Text className="text-center text-white">Adicionar Casa</Text>
+          <Text className="text-center text-white text-lg">Adicionar Casa</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

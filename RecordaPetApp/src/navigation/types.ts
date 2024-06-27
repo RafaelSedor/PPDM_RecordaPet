@@ -9,4 +9,5 @@ export type RootStackParamList = {
   AddAnimal: { houseId: number, onAnimalAdded: () => void };
   AddFeeding: { animalId: number };
   Logout: undefined;
+  AddHouseById: { onHouseAdded: () => Promise<void> };
 };
