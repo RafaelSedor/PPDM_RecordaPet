@@ -6,7 +6,6 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  StyleSheet,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -29,47 +28,47 @@ const AddAnimalScreen: React.FC<AddAnimalScreenProps> = ({
   navigation,
   route,
 }) => {
-  const { onAnimalAdded } = route.params;
+  const { houseId, onAnimalAdded } = route.params;
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const { userId } = useContext(UserContext);
 
   const handleAddAnimal = () => {
-    insertAnimal(name, type, userId, (error, result) => {
-      if (error) {
-        console.error('Error inserting animal:', error);
-        Alert.alert('Error', 'Failed to add animal.');
-      } else {
+    insertAnimal(name, type, houseId)
+      .then(() => {
         if (onAnimalAdded) {
           onAnimalAdded();
         }
         Alert.alert('Success', 'Animal added successfully.', [
           { text: 'OK', onPress: () => navigation.goBack() },
         ]);
-      }
-    });
+      })
+      .catch((error) => {
+        console.error('Error inserting animal:', error);
+        Alert.alert('Error', 'Failed to add animal.');
+      });
   };
 
   return (
     <ScrollView className="bg-blue-800 flex-1">
-      <View className="m-4 p-4 rounded-lg bg-blue-900">
+      <View className="m-4 p-8 rounded-lg bg-blue-900">
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Nome"
           placeholderTextColor="white"
           onChangeText={setName}
         />
         <TextInput
-          className="text-white mb-4 bg-blue-800 p-2 rounded"
+          className="text-white mb-4 bg-blue-700 p-4 rounded text-lg"
           placeholder="Tipo"
           placeholderTextColor="white"
           onChangeText={setType}
         />
         <TouchableOpacity
-          className="bg-green-500 p-2 rounded"
+          className="bg-green-500 p-4 rounded"
           onPress={handleAddAnimal}
         >
-          <Text className="text-center text-white">Adicionar Animal</Text>
+          <Text className="text-center text-white text-lg">Adicionar Animal</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
