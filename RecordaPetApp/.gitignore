@@ -1,19 +1,47 @@
-# React Native
+# Dependencies
 node_modules/
+npm-debug.log
+yarn-error.log
+
+# React Native
 ios/
 android/
 build/
 index.android.js
 index.ios.js
 index.js
+
+# Logs
 *.log
+
+# Patches
 *.patch
 *.diff
+
+# Sublime Text
 *.sublime-project
 *.sublime-workspace
+
+# Xcode
 *.xcuserdatad
 *.xcuserdata
+
+# Lock files
 *.lock
+
+# macOS
 .DS_Store
+
+# Expo
 .expo/
 .expo-shared/
+
+# Others
+.idea/
+.vscode/
+*.swp
+*.tmp
+*.local
+coverage/
+.env
+.history
